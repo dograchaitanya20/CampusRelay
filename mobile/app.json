@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "CampusRelay",
+    "slug": "campusrelay",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": { "resizeMode": "contain", "backgroundColor": "#1A1A2E" },
+    "ios": { "supportsTablet": false, "bundleIdentifier": "in.campusrelay.app" },
+    "android": { "package": "in.campusrelay.app", "adaptiveIcon": { "backgroundColor": "#1A1A2E" },
+      "permissions": ["ACCESS_FINE_LOCATION","ACCESS_COARSE_LOCATION","CAMERA","READ_EXTERNAL_STORAGE"] },
+    "plugins": [
+      ["expo-location", { "locationAlwaysAndWhenInUsePermission": "Allow CampusRelay to use your location." }],
+      ["expo-image-picker", { "photosPermission": "Allow CampusRelay to access your photos.", "cameraPermission": "Allow CampusRelay to use your camera." }]
+    ]
+  }
+}
