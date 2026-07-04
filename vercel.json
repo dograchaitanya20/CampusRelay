@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd web && npm install && npx vite build",
+  "buildCommand": "cd web && npm install && npx --yes vite build",
   "outputDirectory": "web/dist",
   "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
