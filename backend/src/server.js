@@ -9,6 +9,7 @@ const cron     = require('node-cron');
 const path     = require('path');
 
 const app    = express();
+app.set('trust proxy', 1);
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
