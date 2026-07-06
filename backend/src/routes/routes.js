@@ -37,6 +37,7 @@ walletRouter.post('/create-order', async (req, res) => {
     const amt = parseInt(amount);
     if (!amt || amt < 30)
       return res.status(400).json({ success: false, message: 'Minimum top-up is ₹30' });
+    console.log('Razorpay Key ID:', process.env.RAZORPAY_KEY_ID); 
     if (amt > 10000)
       return res.status(400).json({ success: false, message: 'Maximum top-up is ₹10,000' });
 
