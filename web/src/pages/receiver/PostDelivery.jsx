@@ -114,6 +114,8 @@ export default function PostDelivery() {
         <Card>
           <SectionLabel className="flex items-center gap-2"><MapPin className="w-3 h-3" />Delivery Destination</SectionLabel>
           <Input label="Hostel Block" placeholder="e.g. Block C" value={block} onChange={e => setBlock(e.target.value)} />
+          <Input label="Room Number" placeholder="e.g. C-204"
+  value={room} onChange={e => setRoom(e.target.value)} />
           <Input label="Landmark (optional)" placeholder="e.g. Near the water cooler" value={landmark}
             onChange={e => setLandmark(e.target.value)} />
         </Card>

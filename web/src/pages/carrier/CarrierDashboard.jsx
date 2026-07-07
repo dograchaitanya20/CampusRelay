@@ -15,7 +15,7 @@ export default function CarrierDashboard() {
           removeFromFeed, bumpCommissions, accept } = useDeliveryStore();
   const navigate                                    = useNavigate();
 
-  const [online,    setOnline]    = useState(false);
+  const [online, setOnline] = useState(user?.isOnline || false);
   const [accepting, setAccepting] = useState(null);
   const [newFlash,  setNewFlash]  = useState(null);
 
