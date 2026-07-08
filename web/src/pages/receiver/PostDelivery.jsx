@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Clock, Package } from 'lucide-react';
+import { MapPin, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Button, Input, Textarea, Card, SectionLabel } from '../../components/common/UI';
 import useAuthStore from '../../store/authStore';
@@ -15,32 +15,33 @@ const APPS = [
   { key:'other',    label:'Other',    emoji:'📫', color:'#7B7B8F' },
 ];
 
-const MIN_COMM    = 30;
-const PLATFORM_CUT= 7;
+const MIN_COMM     = 30;
+const PLATFORM_CUT = 7;
 
 export default function PostDelivery() {
   const user    = useAuthStore(s => s.user);
   const create  = useDeliveryStore(s => s.create);
   const navigate = useNavigate();
 
-  const [app,     setApp]     = useState('');
-  const [desc,    setDesc]    = useState('');
-  const [fragile, setFragile] = useState(false);
-  const [fromT,   setFromT]   = useState('14:00');
-  const [toT,     setToT]     = useState('14:30');
-  const [block,   setBlock]   = useState(user?.college?.hostelBlock || '');
-  const [landmark,setLandmark]= useState('');
-  const [comm,    setComm]    = useState(MIN_COMM);
-  const [loading, setLoading] = useState(false);
+  const [app,      setApp]      = useState('');
+  const [desc,     setDesc]     = useState('');
+  const [fragile,  setFragile]  = useState(false);
+  const [fromT,    setFromT]    = useState('14:00');
+  const [toT,      setToT]      = useState('14:30');
+  const [block,    setBlock]    = useState(user?.college?.hostelBlock || '');
+  const [room,     setRoom]     = useState(user?.college?.roomNumber  || '');
+  const [landmark, setLandmark] = useState('');
+  const [comm,     setComm]     = useState(MIN_COMM);
+  const [loading,  setLoading]  = useState(false);
 
   const total     = comm + PLATFORM_CUT;
   const canAfford = (user?.wallet?.balance || 0) >= total;
 
   const submit = async () => {
-    if (!app)           return toast.error('Select a delivery app');
-    if (!desc.trim())   return toast.error('Add a package description');
-    if (!block.trim())  return toast.error('Enter hostel block');
-    if (!canAfford)     return toast.error(`Need ₹${total} in wallet. Add money first.`);
+    if (!app)          return toast.error('Select a delivery app');
+    if (!desc.trim())  return toast.error('Add a package description');
+    if (!block.trim()) return toast.error('Enter hostel block');
+    if (!canAfford)    return toast.error(`Need ₹${total} in wallet. Add money first.`);
 
     setLoading(true);
     try {
@@ -49,7 +50,9 @@ export default function PostDelivery() {
         app, description: desc, isFragile: fragile,
         windowFrom:  new Date(`${today} ${fromT}`).toISOString(),
         windowTo:    new Date(`${today} ${toT}`).toISOString(),
-        hostelBlock: block, roomNumber: '', landmark,
+        hostelBlock: block,
+        roomNumber:  room,
+        landmark,
         commission:  comm,
       });
       toast.success('🎉 Request posted! Carriers nearby can see it.');
@@ -89,8 +92,8 @@ export default function PostDelivery() {
         {/* Package Info */}
         <Card>
           <SectionLabel>Package Details</SectionLabel>
-          <Textarea label="Description" placeholder="e.g. 2 boxes biryani, 1 cold drink — Zomato order" value={desc}
-            onChange={e => setDesc(e.target.value)} rows={3} />
+          <Textarea label="Description" placeholder="e.g. 2 boxes biryani, 1 cold drink — Zomato order"
+            value={desc} onChange={e => setDesc(e.target.value)} rows={3} />
           <label className="flex items-center gap-3 cursor-pointer">
             <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${fragile ? 'bg-brand border-brand' : 'border-gray-300'}`}
               onClick={() => setFragile(v => !v)}>
@@ -102,7 +105,9 @@ export default function PostDelivery() {
 
         {/* Delivery Window */}
         <Card>
-          <SectionLabel className="flex items-center gap-2"><Clock className="w-3 h-3" />Delivery Window</SectionLabel>
+          <SectionLabel className="flex items-center gap-2">
+            <Clock className="w-3 h-3" />Delivery Window
+          </SectionLabel>
           <div className="grid grid-cols-2 gap-3">
             <Input label="From" type="time" value={fromT} onChange={e => setFromT(e.target.value)} />
             <Input label="To"   type="time" value={toT}   onChange={e => setToT(e.target.value)} />
@@ -112,12 +117,17 @@ export default function PostDelivery() {
 
         {/* Destination */}
         <Card>
-          <SectionLabel className="flex items-center gap-2"><MapPin className="w-3 h-3" />Delivery Destination</SectionLabel>
-          <Input label="Hostel Block" placeholder="e.g. Block C" value={block} onChange={e => setBlock(e.target.value)} />
-          <Input label="Room Number" placeholder="e.g. C-204"
-  value={room} onChange={e => setRoom(e.target.value)} />
-          <Input label="Landmark (optional)" placeholder="e.g. Near the water cooler" value={landmark}
-            onChange={e => setLandmark(e.target.value)} />
+          <SectionLabel className="flex items-center gap-2">
+            <MapPin className="w-3 h-3" />Delivery Destination
+          </SectionLabel>
+          <div className="grid grid-cols-2 gap-3">
+            <Input label="Hostel Block" placeholder="e.g. Block C"
+              value={block} onChange={e => setBlock(e.target.value)} />
+            <Input label="Room Number" placeholder="e.g. C-204"
+              value={room} onChange={e => setRoom(e.target.value)} />
+          </div>
+          <Input label="Landmark (optional)" placeholder="e.g. Near the water cooler"
+            value={landmark} onChange={e => setLandmark(e.target.value)} />
         </Card>
 
         {/* Commission */}
@@ -135,13 +145,15 @@ export default function PostDelivery() {
           </div>
 
           <div className="bg-white rounded-xl p-3 space-y-2">
-            {[['Commission', `₹${comm}`], ['Platform fee', `₹${PLATFORM_CUT}`]].map(([k,v]) => (
+            {[['Commission', `₹${comm}`], ['Platform fee', `₹${PLATFORM_CUT}`]].map(([k, v]) => (
               <div key={k} className="flex justify-between text-sm">
-                <span className="text-muted">{k}</span><span className="font-semibold">{v}</span>
+                <span className="text-muted">{k}</span>
+                <span className="font-semibold">{v}</span>
               </div>
             ))}
             <div className="border-t border-gray-100 pt-2 flex justify-between text-sm font-bold">
-              <span>Total deducted</span><span className="text-campus-dark">₹{total}</span>
+              <span>Total deducted</span>
+              <span className="text-campus-dark">₹{total}</span>
             </div>
           </div>
 
@@ -164,9 +176,9 @@ export default function PostDelivery() {
           </p>
         </Card>
 
-       <Button onClick={submit} loading={loading} disabled={!canAfford || !user?.isActive} className="w-full" size="lg">
-  {!user?.isActive ? '⏳ Account pending KYC approval' : `🚀 Post Request — ₹${comm}`}
-</Button>
+        <Button onClick={submit} loading={loading} disabled={!canAfford || !user?.isActive} className="w-full" size="lg">
+          {!user?.isActive ? '⏳ Account pending KYC approval' : `🚀 Post Request — ₹${comm}`}
+        </Button>
       </div>
     </div>
   );
