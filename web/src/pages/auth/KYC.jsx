@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Upload, Camera, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { Upload, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Button, Card } from '../../components/common/UI';
 import { authAPI } from '../../services/api';
@@ -276,25 +276,16 @@ export default function KYC() {
                   </div>
                 )}
 
-                {/* Upload buttons */}
+                     {/* Upload buttons */}
                 {!files[doc.key] && (
                   <div className="flex gap-2 mt-3">
                     <label className="flex-1 cursor-pointer">
-                      <input type="file" accept="image/*" capture="environment" className="hidden"
+                      <input type="file" accept="image/*,application/pdf" className="hidden"
                         onChange={e => handleFile(doc.key, e.target.files[0])} />
                       <div className="border border-gray-200 rounded-xl py-2 text-center text-sm font-medium text-campus-dark hover:bg-gray-50 transition-colors flex items-center justify-center gap-1.5">
-                        <Camera className="w-3.5 h-3.5" /> Camera
+                        <Upload className="w-3.5 h-3.5" /> Upload
                       </div>
                     </label>
-                    {!doc.camOnly && (
-                      <label className="flex-1 cursor-pointer">
-                        <input type="file" accept="image/*,application/pdf" className="hidden"
-                          onChange={e => handleFile(doc.key, e.target.files[0])} />
-                        <div className="border border-gray-200 rounded-xl py-2 text-center text-sm font-medium text-campus-dark hover:bg-gray-50 transition-colors flex items-center justify-center gap-1.5">
-                          <Upload className="w-3.5 h-3.5" /> Gallery
-                        </div>
-                      </label>
-                    )}
                   </div>
                 )}
               </div>
