@@ -1,5 +1,6 @@
 const jwt           = require('jsonwebtoken');
 const User          = require('../models/User');
+// const { runKYCVerification } = require('../utils/rekognition');
 const { runKYCVerification } = require('../utils/rekognition');
 
 const sign = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || '7d' });
@@ -65,6 +66,11 @@ exports.submitKyc = async (req, res) => {
       selfieUrl    = `dev://selfie_${user._id}`;
     } else {
       const cloudinary = require('cloudinary').v2;
+            cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key:    process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+      });
       const uploadBuf  = (buf, folder) => new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
           { folder, resource_type: 'image', quality: 'auto' },
