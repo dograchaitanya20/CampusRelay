@@ -100,8 +100,16 @@ const startServer = (port) => {
 };
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log('✅ MongoDB connected');
+    // One-time AWS Rekognition setup (creates face collection if not exists)
+    try {
+      const { createFaceCollection } = require('./utils/rekognition');
+      await createFaceCollection();
+      console.log('✅ AWS Rekognition ready');
+    } catch (err) {
+      console.warn('⚠️ AWS Rekognition setup skipped:', err.message);
+    }
     const PORT = Number(process.env.PORT) || 5000;
     startServer(PORT);
   })
